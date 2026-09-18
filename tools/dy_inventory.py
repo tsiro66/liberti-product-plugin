@@ -57,6 +57,19 @@ QUESTIONS: dict[str, str] = {
 def norm(code: str) -> str:
     return code.upper().replace("-", "").replace(" ", "")
 
+MERGE_ALIASES = {"7004N": "7004", "7005N": "7005", "8008S": "8008"}
+
+# Operator decisions 2026-09-18:
+MERGE_SUFFIX_INTO_BASE = {"7004N": "7004", "7005N": "7005", "8008S": "8008"}
+DEFER = {
+    "8006OR8504": "unsure which code applies (filename says 8006or8504)",
+    "8010OR8508": "unsure which code applies (8010 or 8508)",
+    "8503OR8506": "unsure which code applies (8503 or 8506)",
+    "9966OR9967": "same product, code uncertain (9966 or 9967)",
+    "TS1": "S/M/A letters look like size variants — upload manually",
+    "TS2": "TS2/TS2A — size variants — upload manually",
+}
+
 
 def parse(stem: str, folder: str):
     low = stem.lower()
@@ -120,15 +133,25 @@ def parse(stem: str, folder: str):
 
     # ── folder 3 ────────────────────────────────────────────────────────────
     if folder == "3":
+        # 7054BSb / 7053PSA -> colour-code suffix is part of the SKU; trailing
+        # lowercase letter = photo number
+        m = re.match(r"^(\d{4,6}[A-Z]{2})([aAbB])(?:\s+(.+))?$", stem)
+        if m:
+            return m.group(1).upper(), (m.group(3) or ""), f"photo {m.group(2).upper()}"
+        m = re.match(r"^([A-Z]{1,3}\d{3,4})([aAbB])(?:\s+(.+))?$", stem)
+        if m:
+            return m.group(1).upper(), (m.group(3) or ""), f"photo {m.group(2).upper()}"
+        # 161236A / 161236b  (single letter suffix = photo)
         m = re.match(r"^(\d{4,6})([aAbB])(?:\s+(.+))?$", stem)
         if m:
             return m.group(1), (m.group(3) or ""), f"photo {m.group(2).upper()}"
-        m = re.match(r"^(\d{4,6})\s*(.*)$", stem)
+        # full code with colour-code suffix, no photo letter: 7050SG, 681307BS
+        m = re.match(r"^(\d{4,6}[A-Z]{2})$", stem)
+        if m:
+            return stem.upper(), "", ""
+        m = re.match(r"^(\d{4,6})\s+(.+)$", stem)
         if m:
             return m.group(1), m.group(2), ""
-        m = re.match(r"^([A-Z]{1,3}\d{3,4})([aAbB])(?:\s+(.+))?$", stem)
-        if m:
-            return m.group(1).upper(), (m.group(3) or ""), f"photo {m.group(2)}"
         m = re.match(r"^([A-Z]{1,3}\d{3,4})\s+(.+?)\s+([A-Z])$", stem)
         if m:
             return m.group(1).upper(), m.group(2), f"photo {m.group(3)}"
@@ -149,7 +172,7 @@ def parse(stem: str, folder: str):
             photo = f"photo {m.group(3)}" if m.group(3) else ""
             return m.group(1), colour, photo
         # 7008Tan / D006183Black (camel-case colour glued to code)
-        m = re.match(r"^(\d{3,4}|[A-Z]\d{5})([A-Z][a-z]+)$", stem)
+        m = re.match(r"^([A-Z]?\d{4,6})([A-Z][a-z]+)$", stem)
         if m and m.group(2).lower() not in {"n"}:
             return m.group(1), m.group(2), ""
         m = re.match(r"^(\d{3,4})([A-Z])([A-Z])?$", stem, re.I)
@@ -205,7 +228,7 @@ def main() -> int:
                 junk.append((folder.name, f.name, "junk"))
                 continue
             code, colour, photo = parsed
-            key = (folder, norm(code))
+            key = (folder.name, norm(code))
             e = raw.setdefault(key, {"code": code, "files": [], "colours": set(),
                                      "photos": set(), "views": set()})
             e["files"].append(f)
@@ -218,6 +241,21 @@ def main() -> int:
             if photo:
                 e["photos"].add(photo)
 
+    # pass 1b: merge same code across folders (Heel Caps in folder 3 + 4)
+    by_code: dict[str, list[tuple]] = defaultdict(list)
+    for (folder, code) in raw:
+        by_code[code].append((folder, code))
+    for code, keys in by_code.items():
+        if len(keys) > 1:
+            keep = min(keys)
+            for k in keys:
+                if k != keep:
+                    raw[keep]["files"].extend(raw[k]["files"])
+                    raw[keep]["colours"] |= raw[k]["colours"]
+                    raw[keep]["photos"] |= raw[k]["photos"]
+                    raw[keep]["views"] |= raw[k].get("views", set())
+                    raw.pop(k)
+
     # second pass: merge bare-code duplicates into DY-prefixed ones (3118 -> DY3118)
     all_codes = {c for (_f, c) in raw}
     merged: dict[tuple, dict] = {}
@@ -229,20 +267,55 @@ def main() -> int:
             continue
         merged[(folder, code)] = e
 
+    # fold width/label variants into base products (operator decision)
+    for alias, base in list(MERGE_ALIASES.items()):
+        src_key = next(((f, c) for (f, c) in merged if norm(c) == alias), None)
+        dst_key = next(((f, c) for (f, c) in merged if norm(c) == base), None)
+        if src_key and dst_key and src_key != dst_key:
+            merged[dst_key]["files"].extend(merged[src_key]["files"])
+            merged[dst_key]["colours"] |= merged[src_key]["colours"]
+            del merged[src_key]
+
     out = BRAND_DIR / "inventory-review.csv"
     with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["folder", "code", "colours", "n_photos", "photo_files", "open_question"])
         n_q = 0
+        import sqlite3
+        live_db = ROOT / "local" / "vm_analysis.db"
+        live_skus = set()
+        if live_db.exists():
+            con = sqlite3.connect(live_db)
+            live_skus = {r[0].upper() for r in con.execute(
+                "SELECT product_sku FROM xhngw_virtuemart_products")}
+            con.close()
+
+        deferred = []
         for (folder, code), e in sorted(merged.items(), key=lambda kv: (kv[0][0], kv[0][1])):
             best = best_format(e["files"])
             rel = " ; ".join(f"{folder}/{f.name}" for f in best)
             colours = " | ".join(sorted(e["colours"])) or "(single)"
             q = next((t for k, t in QUESTIONS.items() if norm(code).startswith(k)), "")
+            nq = norm(code)
+            if nq in live_skus or code in live_skus:
+                deferred.append((code, "ALREADY IN SHOP (existing product, skip: creates-only rule)", colours, len(best)))
+                continue
+            if nq in DEFER:
+                deferred.append((code, DEFER[nq], colours, len(best)))
+                continue
             if q:
                 n_q += 1
-            w.writerow([folder.name, code, colours, len(best), rel, q])
-    print(f"Dance You inventory: {len(merged)} products -> {out.name} ({n_q} with open questions)")
+            w.writerow([folder, code, colours, len(best), rel, q])
+        if deferred:
+            dpath = BRAND_DIR / "deferred-items.csv"
+            dpath = BRAND_DIR / "deferred-items.csv"
+            with open(dpath, "w", newline="", encoding="utf-8") as df:
+                dw = csv.writer(df)
+                dw.writerow(["code", "reason", "colours", "n_photos"])
+                for row in deferred:
+                    dw.writerow(row)
+            print(f"deferred for manual upload: {len(deferred)} -> {dpath.name}")
+    print(f"Dance You inventory: imported candidates written; {n_q} open questions")
     print(f"junk/non-image ({len(junk)}): {junk}")
     return 0
 
