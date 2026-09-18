@@ -19,6 +19,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from dy_csv import build_description, classify_type  # shared description builder
+
 ROOT = Path(__file__).resolve().parent.parent
 REAL = ROOT / "real-images"
 IMG_EXT = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp"}
@@ -211,9 +214,9 @@ def main() -> int:
             title_en = name
             title_el = greek_title(name, brand)
             fabric = fabric_from(name)
-            desc_en = f"{name}. Colours: {colours_j.replace('|', ', ')}." if colours_j else f"{name}."
-            desc_el = (f"{title_el}. Χρώματα: {colours_j.replace('|', ', ')}." if colours_j
-                       else f"{title_el}.")
+            desc_en = build_description(name, colours_en=colours_j, heel="", sizes="", lang="en")
+            desc_el = build_description(name, colours_en=colours_j, heel="", sizes="", lang="el",
+                                        el_title=title_el)
             prows.append({
                 "sku": code, "title_en": title_en, "description_en": desc_en,
                 "title_el": title_el, "description_el": desc_el,

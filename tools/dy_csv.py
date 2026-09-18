@@ -177,6 +177,111 @@ def expand_sizes(sizes_text: str) -> str:
     return t
 
 
+DESC_TYPES = {
+    "leotard": ("Soft, comfortable {mat} leotard designed for ballet and dance classes",
+                "Απαλή και άνετη λεοκάρδα για μπαλέτο και μαθήματα χορού"),
+    "dress": ("Dance dress with a twirl-friendly silhouette for classes and performances",
+              "Φόρεμα χορού με αερινούχο σιλουέτα για μαθήματα και παραστάσεις"),
+    "skirt": ("Chiffon dance skirt that wraps over any leotard", "Φούστα σιφόν που φοριέται πάνω από κάθε λεοκάρδα"),
+    "latin": ("Professional Latin dance shoe", "Επαγγελματικό παπούτσι Latin"),
+    "character": ("Character shoe for theatre and character dance",
+                  "Παπούτσι character για θέατρο και παραστάσεις"),
+    "jazz": ("Flexible jazz shoe/sneaker with great floor grip", "Εύκαμπτο παπούτσι τζαζ με εξαιρετική πρόσφυση"),
+    "sneaker": ("Flexible dance sneaker with great floor grip", "Εύκαμπτο sneaker χορού με σπουδαία πρόσφυση"),
+    "half shoe": ("Half-sole ballet shoe for rhythmic gymnastics",
+                  "Μισοπαπούτσι ρυθμικής γυμναστικής"),
+    "ballet": ("Ballet shoe", "Παπούτσι μπαλέτου"),
+    "ballet sock": ("Ballet sock", "Κάλτσα μπαλέτου"),
+    "tights": ("Dance tights", "Κολάν χορού"),
+    "underlayer": ("Dance underlayer to wear beneath the leotard", "Εσώρουχο χορού που φοριέται κάτω από τη λεοκάρδα"),
+    "top": ("Layering top for dance classes", "Τοπ για μαθήματα χορού"),
+    "short": ("Hot shorts for dance and gym", "Σορτς για χορό και γυμναστική"),
+    "warm-up": ("Warm-up booties to keep your feet ready before class",
+                "Μποτάκια warming-up για να κρατούν τα πόδια έτοιμα πριν το μάθημα"),
+    "bag": ("Dancewear bag", "Τσάντα για ρούχα χορού"),
+    "backpack": ("Dance backpack", "Σακίδιο χορού"),
+    "ribbon": ("Satin pointe-shoe ribbon", "Κορδέλα για πουάν"),
+    "elastic": ("Dance elastic", "Λάστιχο χορού"),
+    "accessory": ("Dance accessory", "Αξεσουάρ χορού"),
+    "sandals": ("Dance sandals", "Σανδάλια χορού"),
+    "pointe": ("Pointe shoe with strong support for advanced and professional dancers",
+               "Παπούτσι πουάν για προχωρημένες και επαγγελματίες χορεύτριες"),
+}
+
+
+POINTE_MODELS = {"nova", "fouette", "fouetté", "dream", "maya", "smart pointe",
+                 "stream pointe", "neo pointe", "miracle", "novice", "alice",
+                 "tamara", "victory", "elite", "katya", "glisse", "airess",
+                 "hanami", "daisy", "tiffany"}
+
+
+def classify_type(name: str) -> str:
+    low = name.lower()
+    for model in POINTE_MODELS:
+        if model in low:
+            return "pointe"
+    if "pointe" in low:
+        return "pointe"
+    if "latin" in low:
+        return "latin"
+    if re.search(r"leotard", low):
+        return "leotard"
+    if re.search(r"skirt", low):
+        return "skirt"
+    if re.search(r"dress", low):
+        return "dress"
+    if re.search(r"character", low) and "shoe" in low:
+        return "character"
+    if re.search(r"jazz|sneaker", low):
+        return "jazz"
+    if re.search(r"ballet", low) and ("shoe" in low or "full sole" in low):
+        return "ballet"
+    if re.search(r"sock", low):
+        return "ballet sock"
+    if re.search(r"tights", low):
+        return "tights"
+    if re.search(r"bra|brief|underlayer", low):
+        return "underlayer"
+    if re.search(r"top", low):
+        return "top"
+    if re.search(r"short", low):
+        return "short"
+    if re.search(r"booties", low):
+        return "warm-up"
+    if re.search(r"bag|backpack|tote", low):
+        return "bag"
+    if re.search(r"ribbon", low):
+        return "ribbon"
+    if re.search(r"elastic", low):
+        return "elastic"
+    if re.search(r"sandal", low):
+        return "sandals"
+    return "accessory"
+
+
+def build_description(name: str, *, colours_en: str, heel: str, sizes: str, lang: str, el_title: str = "") -> str:
+    t = classify_type(name or "")
+    en_tpl, el_tpl = DESC_TYPES[t]
+    if lang == "en":
+        base = en_tpl.format(mat="")
+    else:
+        base = el_tpl
+        if el_title and classify_type(el_title) != "accessory":
+            pass
+    bits = []
+    colours = (colours_en or "").replace("(single)", "").replace(" | ", ", ").replace("|", ", ").strip(", ")
+    if colours and colours.lower() != "(single)":
+        if lang == "en":
+            base += f" — available in {colours}."
+        else:
+            base += f" — διαθέσιμο σε {translate_colour_desc(colours)}."
+    if heel:
+        base += f" Heel: {heel}." if lang == "en" else f" Τακούνι: {heel}."
+    if sizes:
+        base += f" Sizes: {sizes}." if lang == "en" else f" Μέγέθη: {sizes}."
+    return re.sub(r"\s+", " ", base).strip()
+
+
 def main() -> int:
     inv = list(csv.DictReader(open(DY / "inventory-review.csv")))
     cat: dict[str, dict] = {}
@@ -203,15 +308,15 @@ def main() -> int:
                 desc = cat_row["name"]
             colour_desc = cat_row["name"] if (cat_row and cat_row["name"] and
                                               not re.search(r"(Leotard|Skirt|Dress|Shoe|Sandal|Short|Top|Bag)", cat_row["name"], re.I)) else desc
-            title_en = f"Godance Latin Shoes {colour_desc} {code}".strip() if colour_desc else f"Godance Latin Shoes {code}"
-            title_el = f"Υπόδημα Λάτιν {translate_colour_desc(colour_desc or '')} {code}".replace("  ", " ").strip()
+            title_en = f"Godance Latin Shoes {colour_desc}".strip() if colour_desc else "Godance Latin Shoes"
+            title_el = f"Υπόδημα Λάτιν {translate_colour_desc(colour_desc or '')}".replace("  ", " ").strip()
         else:
             name = (cat_row["name"] if cat_row else code)
-            title_en = f"{name} {code}".strip() if name != code else code
+            title_en = name if name != code else code
             gt = greek_type(name or "")
             qual = ""
             # keep EN qualifiers translated in parens if any matched word known
-            title_el = f"{gt or 'Dance You'} {code}".strip()
+            title_el = gt or "Dance You"
 
         # ── colours ───────────────────────────────────────────────────────────
         colours = ""
@@ -240,17 +345,8 @@ def main() -> int:
         name_en = (cat_row["name"] if cat_row else title_en)
         bits_en = [name_en]
         bits_el = [title_el]
-        desc_en = f"{name_en}. " if name_en else ""
-        desc_el = f"{title_el}. " if title_el else ""
-        if row["colours"] not in ("(single)", ""):
-            desc_en += f"Colours: {row['colours'].replace(' | ', ', ')}. "
-            desc_el += f"Χρώματα: {translate_colour_desc(row['colours'].replace(' | ', ', '))}. "
-        if cat_row and cat_row["heel"]:
-            desc_en += f"Heel: {cat_row['heel']}. "
-            desc_el += f"Τακούνι: {cat_row['heel']}. "
-        if sizes:
-            desc_en += f"Sizes: {sizes}. "
-            desc_el += f"Μέγέθη: {sizes}. "
+        desc_en = build_description(name_en, colours_en=colours, heel=(cat_row["heel"] if cat_row else ""), sizes=sizes, lang="en")
+        desc_el = build_description(name_en, colours_en=colours, heel=(cat_row["heel"] if cat_row else ""), sizes=sizes, lang="el", el_title=title_el)
 
         out_rows.append({
             "sku": code,
