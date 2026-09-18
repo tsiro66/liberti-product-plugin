@@ -12,3 +12,4 @@ real-images/
 tools/__pycache__/
 support_antima_.sql
 server-bundle/logs/
+data/
