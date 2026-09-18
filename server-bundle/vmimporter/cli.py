@@ -40,6 +40,9 @@ def build_parser() -> argparse.ArgumentParser:
                       help="validate CSV + images without touching any database")
     p.add_argument("--yes", "-y", action="store_true",
                    help="skip the interactive confirmation (for scripted runs)")
+    p.add_argument("--create-only", action="store_true",
+                   help="skip rows whose SKU already exists in the shop "
+                        "(never update existing products)")
     p.add_argument("--limit", type=int, default=None, metavar="N",
                    help="process at most N CSV rows (after --sku filtering)")
     p.add_argument("--sku", default=None,
@@ -185,6 +188,16 @@ def main(argv: list[str] | None = None) -> int:
             if plan.errors:
                 plan_failures += 1
                 log.error("SKU %s: %s", row.sku, "; ".join(plan.errors))
+                plans.append((row, plan))
+                continue
+            if args.create_only and plan.operation == "UPDATE":
+                log.info("SKU %s: exists in shop — skipped (--create-only)", row.sku)
+                summary.skipped += 1
+                summary.validation_errors += 1
+                summary.failures.append(
+                    f"{row.sku}: exists in shop — skipped by --create-only "
+                    f"(upload manually if a change is intended)")
+                continue
             plans.append((row, plan))
     except Exception as exc:
         log.error("planning failed: %s", exc)
