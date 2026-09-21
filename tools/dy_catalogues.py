@@ -18,7 +18,7 @@ import csv
 import re
 from pathlib import Path
 
-CAT = Path(__file__).resolve().parent.parent / "real-images" / "dance you" / "catalogues"
+CAT = Path(__file__).resolve().parent.parent / "real-images" / "dance-you" / "catalogues"
 
 
 def parse_latin(text: str, source: str):

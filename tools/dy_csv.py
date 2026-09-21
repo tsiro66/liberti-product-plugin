@@ -24,7 +24,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DY = ROOT / "real-images" / "dance you"
+DY = ROOT / "real-images" / "dance-you"
 
 # ── translation dictionaries ─────────────────────────────────────────────────
 TYPE_EL = [

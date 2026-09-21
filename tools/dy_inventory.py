@@ -30,7 +30,7 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BRAND_DIR = ROOT / "real-images" / "dance you"
+BRAND_DIR = ROOT / "real-images" / "dance-you"
 IMG_EXT = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".webp"}
 BEST_EXT_ORDER = [".jpg", ".jpeg", ".png", ".webp", ".bmp", ".gif"]
 
