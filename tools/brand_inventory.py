@@ -222,7 +222,7 @@ def main() -> int:
                 "title_el": title_el, "description_el": desc_el,
                 "price": "", "sizes": "", "colours": colours_j, "fabric": fabric,
             })
-        pout = ROOT / f"products.{brand}.csv"
+        pout = ROOT / "csv" / f"products.{brand}.csv"
         with open(pout, "w", newline="", encoding="utf-8") as fh:
             w = csv.DictWriter(fh, fieldnames=[
                 "sku", "title_en", "description_en", "title_el", "description_el",

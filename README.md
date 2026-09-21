@@ -16,6 +16,27 @@ python importer.py products.csv --validate-only
 
 ---
 
+## Where is what (project map)
+
+| Path | What it is |
+|---|---|
+| `vmimporter/` | **The importer package — single source of truth.** Edit here only. |
+| `importer.py` | CLI launcher. |
+| `tests/` | sqlite-based test suite (`​.venv/bin/pytest tests/ -q`). |
+| `docs/` | Database analysis, pre-production audit, CSV format guide. |
+| `csv/` | Work-in-progress brand CSVs (capezio / danceyou / grishko). |
+| `real-images/` | Brand image banks (scanned recursively by filename/SKU). |
+| `data/` | Scraped supplier pages, catalogues, inventory workfiles. |
+| `tools/` | Data-prep scripts + `sync-bundle.py` (see `docs/project-map.md`). |
+| `server-bundle/` | FTP staging area for the server. **Never edit `server-bundle/vmimporter/` by hand** — run `python3 tools/sync-bundle.py` and upload what it lists. |
+| `local/vm_analysis.db` | Local sqlite copy of the DB dump (git-ignored). |
+| `support_antima_.sql` | Live DB dump (git-ignored — never commit). |
+| `archive/` | Old snapshots. |
+
+Deployment = FTP from `server-bundle/` to `import-bundle/` on the server (see `server-bundle/README-IMPORT.md`).
+
+---
+
 ## 1. Installation
 
 Requires Python 3.11+.

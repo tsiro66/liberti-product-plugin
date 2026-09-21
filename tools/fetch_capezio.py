@@ -144,7 +144,7 @@ def fetch_product_page(slug: str) -> dict:
 
 
 def main() -> int:
-    csv_path = ROOT / "products.capezio.csv"
+    csv_path = ROOT / "csv" / "products.capezio.csv"
     codes = sorted({r["sku"].upper() for r in csv.DictReader(open(csv_path))})
     print(f"fetching official data for {len(codes)} Capezio codes (cached)...")
     styles: dict[str, dict] = defaultdict(lambda: {

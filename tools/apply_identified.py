@@ -56,7 +56,7 @@ def apply(csv_path: Path, manual_path: Path, sku_map: dict | None = None) -> tup
 
 
 def main() -> int:
-    n, total = apply(ROOT / "products.danceyou.csv", IDENT / "danceyou-manual.csv")
+    n, total = apply(ROOT / "csv" / "products.danceyou.csv", IDENT / "danceyou-manual.csv")
     print(f"danceyou: applied {n}/{total} rows")
     n, total = apply(ROOT / "products.grishko.csv", IDENT / "grishko-manual.csv")
     print(f"grishko: applied {n}/{total} rows")

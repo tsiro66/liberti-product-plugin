@@ -360,7 +360,7 @@ def main() -> int:
             "fabric": fabric,
         })
 
-    out = ROOT / "products.danceyou.csv"
+    out = ROOT / "csv" / "products.danceyou.csv"
     with open(out, "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=[
             "sku", "title_en", "description_en", "title_el", "description_el",

@@ -18,7 +18,7 @@ from dy_csv import build_description
 
 ROOT = Path(__file__).resolve().parent.parent
 OFF = ROOT / "data" / "grishko" / "official-data.csv"
-CSV_IN = ROOT / "products.grishko.csv"
+CSV_IN = ROOT / "csv" / "products.grishko.csv"
 
 
 def strip_code(name: str) -> str:
