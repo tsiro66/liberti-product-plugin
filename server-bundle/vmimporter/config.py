@@ -75,7 +75,8 @@ class Config:
     vm_admin_user_id: int = 0
     #: VAT percent, only used when price_mode == "gross" (rule 1 = 24%).
     vat_rate: float = 24.0
-    #: "net" -> CSV price stored verbatim (DB convention); "gross" -> divided by (1 + vat/100).
+    #: "net" -> CSV price stored verbatim (DB convention); "gross" -> CSV price is
+    #: the final VAT-inclusive shop price; stored net = price / (1 + vat/100).
     price_mode: str = "net"
 
     # --- importer behaviour -------------------------------------------------
@@ -138,7 +139,8 @@ def load_config(env_file: str | None = None, cli_overrides: dict | None = None) 
         price_mode=get("PRICE_MODE", "net").lower(),
     )
     if cfg.price_mode not in {"net", "gross"}:
-        raise ValueError(f"PRICE_MODE must be 'net' or 'gross', got {cfg.price_mode!r}")
+        raise ValueError(
+            f"PRICE_MODE must be 'net' or 'gross', got {cfg.price_mode!r}")
 
     for key, value in (cli_overrides or {}).items():
         if value is not None:

@@ -92,3 +92,22 @@ def test_copy_image_never_overwrites(tmp_path):
     src.write_bytes(b"BBBB")
     with pytest.raises(FileExistsError):
         copy_image(src, str(dest_dir), "images/stories/virtuemart/product")
+
+
+def test_tight_prefix_digit_guard():
+    """'1022W Ava.jpg' must not attach to SKU '102' (digit after prefix)."""
+    from pathlib import Path
+    files = [Path("102 Glisse.jpg"), Path("1022W Ava.jpg"), Path("1130 Airess.jpg")]
+    grouped, warns = match_images(files, ["102", "1130"])
+    assert grouped["102"] == [Path("102 Glisse.jpg")]
+    assert grouped["1130"] == [Path("1130 Airess.jpg")]
+    # 1022W Ava matched no SKU -> warning, not a wrong assignment
+    assert any("1022W Ava.jpg" in w and "does not match" in w for w in warns)
+
+
+def test_tight_prefix_hyphen_variant_still_matches():
+    """'0510-1 Pink.jpg' DOES match SKU '0510' (hyphen after SKU, not a digit)."""
+    from pathlib import Path
+    files = [Path("0510-1 Pink.jpg")]
+    grouped, _w = match_images(files, ["0510"])
+    assert grouped["0510"] == [Path("0510-1 Pink.jpg")]

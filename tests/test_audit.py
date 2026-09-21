@@ -57,12 +57,7 @@ def test_read_only_connection_blocks_product_import(vm_db, cfg):
 
 def test_update_preserves_manufacturer_and_category_links(vm_db, cfg):
     """product_manufacturers / product_categories rows must survive updates."""
-    vm_db.execute(
-        "CREATE TABLE IF NOT EXISTS xhngw_virtuemart_product_manufacturers ("
-        "id INTEGER PRIMARY KEY, virtuemart_product_id INTEGER DEFAULT 0, "
-        "virtuemart_manufacturer_id INTEGER DEFAULT 0)")
-    vm_db.execute(
-        "INSERT INTO xhngw_virtuemart_product_manufacturers VALUES (452, 494, 15)")
+    # (manufacturer link 452 = 494 -> 15 is seeded by conftest now)
 
     imp = ProductImporter(vm_db, cfg)
     row = make_row(price_raw="83", price_net=83.0, sizes=["36"], colours=["BLK"])
@@ -79,8 +74,8 @@ def test_update_preserves_manufacturer_and_category_links(vm_db, cfg):
         "SELECT virtuemart_category_id FROM xhngw_virtuemart_product_categories "
         "WHERE virtuemart_product_id=494")
     assert cat["virtuemart_category_id"] == 62
-    # the importer has no manufacturer repository at all:
-    assert not hasattr(imp, "manufacturers")
+    # empty manufacturer cell + no CSV column: existing link untouched (asserted
+    # above == 15); the importer only ever ADDS manufacturer links, never removes
 
 
 def test_unicode_filename_roundtrip(vm_db, cfg, tmp_path):

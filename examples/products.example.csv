@@ -1,4 +1,4 @@
-sku,title_en,description_en,title_el,description_el,price,sizes,colours,fabric,short_desc_en,short_desc_el
-0405PT,"Tights 0405PT with Inside Brushing","<p>Warm dance tights with soft inside brushing. High elastic waist.</p>","Κολάν 0405PT με Inside Brushing","<p>Κολάν 0405PT με εσωτερικό brushing. Ελαστική μέση.</p>",96.50,36|38|40|42|44,BLK|NAVY|MICRO,,
-0406PT,"Tights 0406PT Transition Foot","<p>Transition-foot dance tights, ultra soft.</p>","Κολάν 0406PT μεταβατικό πόδι","<p>Κολάν 0406PT μεταβατικό πόδι, εξαιρετικά μαλακό.</p>",87.90,34|36|38|40,BLK|SUNTAN,,
-0412,"Dance Belt 0412","<p>Classic dance belt.</p>","Ζώνη χορού 0412","<p>Κλασική ζώνη χορού.</p>",18.20,,,Satin,,
+sku,title_en,description_en,title_el,description_el,price,sizes,colours,fabric,short_desc_en,short_desc_el,category_id,manufacturer_id
+0405PT,"Tights 0405PT with Inside Brushing","<p>Warm dance tights with soft inside brushing. High elastic waist.</p>","Κολάν 0405PT με Inside Brushing","<p>Κολάν 0405PT με εσωτερικό brushing. Ελαστική μέση.</p>",96.50,36|38|40|42|44,BLK|NAVY|MICRO,,,,
+0406PT,"Tights 0406PT Transition Foot","<p>Transition-foot dance tights, ultra soft.</p>","Κολάν 0406PT μεταβατικό πόδι","<p>Κολάν 0406PT μεταβατικό πόδι, εξαιρετικά μαλακό.</p>",87.90,34|36|38|40,BLK|SUNTAN,,,,
+0412,"Dance Belt 0412","<p>Classic dance belt.</p>","Ζώνη χορού 0412","<p>Κλασική ζώνη χορού.</p>",18.20,,,Satin,,,,

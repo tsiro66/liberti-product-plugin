@@ -11,7 +11,15 @@ CSV format (documented in README):
   - `price` uses a dot as decimal separator; a single comma is tolerated
     (European notation) and converted. The semantics of the number (net vs
     gross) are controlled by --price-mode, not by the CSV.
-  - optional columns: short_desc_en, short_desc_el (product_s_desc).
+  - optional columns: short_desc_en, short_desc_el (product_s_desc),
+    category_id (per-product category; pipe-separated for several, e.g. `62|65`).
+    An EMPTY cell means "no category for this row" (even if --category-id is
+    given). If the column is absent entirely, the --category-id CLI flag
+    applies to every new product. Ids are validated against the DB during
+    planning (unknown id = error for that row).
+  - optional column: manufacturer_id (single virtuemart_manufacturer_id; the
+    shop convention is one manufacturer per product). Empty/absent = no
+    manufacturer. Validated against the DB during planning.
   - unknown columns are a validation error (typo protection).
 """
 from __future__ import annotations
@@ -30,7 +38,8 @@ REQUIRED_COLUMNS = [
     "colours",
     "fabric",
 ]
-OPTIONAL_COLUMNS = ["short_desc_en", "short_desc_el"]
+OPTIONAL_COLUMNS = ["short_desc_en", "short_desc_el", "category_id",
+                    "manufacturer_id"]
 KNOWN_COLUMNS = set(REQUIRED_COLUMNS + OPTIONAL_COLUMNS)
 
 MULTI_VALUE_FIELDS = ("sizes", "colours", "fabric")
@@ -58,6 +67,16 @@ class ProductRow:
     fabric: list[str]
     short_desc_en: str = ""
     short_desc_el: str = ""
+    #: Per-product category ids from the CSV `category_id` column.
+    #: None  = column absent from the header -> --category-id CLI flag applies.
+    #: []    = column present but cell empty -> NO category for this row.
+    #: [ids] = the validated later against the DB (importer planning).
+    category_ids: list[int] | None = None
+    #: Per-product manufacturer id from the CSV `manufacturer_id` column.
+    #: None  = column absent from the header -> no manufacturer.
+    #: None-celled empty list [] = column present but cell empty -> none.
+    #: Single id = validated later against the DB (importer planning).
+    manufacturer_id: int | None = None
     #: populated during image matching; deterministic order (main image first)
     images: list = field(default_factory=list)
     #: set later by the price module
@@ -132,6 +151,9 @@ def parse_csv(path: str) -> tuple[list[ProductRow], list[str]]:
                 problems.append(f"missing required column(s): {', '.join(missing)}")
                 raise ValidationError(problems)
 
+            has_cat_col = "category_id" in header
+            has_mf_col = "manufacturer_id" in header
+
             rows: list[ProductRow] = []
             seen_skus: dict[str, int] = {}
 
@@ -194,6 +216,51 @@ def parse_csv(path: str) -> tuple[list[ProductRow], list[str]]:
                         )
                     multi[fieldname] = values
 
+                # per-product category ids (CSV column wins over the CLI flag;
+                # an empty cell means explicitly NO category for this row)
+                category_ids: list[int] | None = None
+                if has_cat_col:
+                    raw_cat = rec.get("category_id", "")
+                    if raw_cat:
+                        cat_values = [t.strip() for t in raw_cat.split("|") if t.strip()]
+                        parsed_ids: list[int] = []
+                        for tok in cat_values:
+                            try:
+                                parsed_ids.append(int(tok))
+                            except ValueError:
+                                problems.append(
+                                    f"row {row_num} ({sku}): category_id value {tok!r} "
+                                    f"is not a category id (whole numbers only, e.g. 62|65)"
+                                )
+                        parsed_ids, cat_dupes = dedupe_keep_order(parsed_ids)
+                        if cat_dupes:
+                            warnings.append(
+                                f"row {row_num} ({sku}): duplicate category_id(s) ignored: "
+                                f"{', '.join(str(d) for d in cat_dupes)}"
+                            )
+                        category_ids = parsed_ids
+                    else:
+                        category_ids = []
+
+                # per-product manufacturer (single id; empty = none)
+                manufacturer_id: int | None = None
+                if has_mf_col:
+                    raw_mf = rec.get("manufacturer_id", "").strip()
+                    if raw_mf:
+                        if "|" in raw_mf:
+                            problems.append(
+                                f"row {row_num} ({sku}): manufacturer_id {raw_mf!r} must be a "
+                                f"single id (the shop uses one manufacturer per product)"
+                            )
+                        else:
+                            try:
+                                manufacturer_id = int(raw_mf)
+                            except ValueError:
+                                problems.append(
+                                    f"row {row_num} ({sku}): manufacturer_id value "
+                                    f"{raw_mf!r} is not a manufacturer id (whole number, e.g. 16)"
+                                )
+
                 rows.append(
                     ProductRow(
                         row_number=row_num,
@@ -208,6 +275,8 @@ def parse_csv(path: str) -> tuple[list[ProductRow], list[str]]:
                         fabric=multi["fabric"],
                         short_desc_en=rec.get("short_desc_en", ""),
                         short_desc_el=rec.get("short_desc_el", ""),
+                        category_ids=category_ids,
+                        manufacturer_id=manufacturer_id,
                         price_net=price,
                     )
                 )

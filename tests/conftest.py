@@ -109,7 +109,61 @@ CREATE TABLE xhngw_virtuemart_product_categories (
   virtuemart_category_id INTEGER NOT NULL DEFAULT 0,
   ordering INTEGER NOT NULL DEFAULT 0
 );
+CREATE TABLE xhngw_virtuemart_categories (
+  virtuemart_category_id INTEGER PRIMARY KEY,
+  virtuemart_vendor_id INTEGER NOT NULL DEFAULT 1,
+  category_parent_id INTEGER NOT NULL DEFAULT 0,
+  published INTEGER NOT NULL DEFAULT 1,
+  created_on TEXT, created_by INTEGER NOT NULL DEFAULT 0,
+  modified_on TEXT, modified_by INTEGER NOT NULL DEFAULT 0,
+  locked_on TEXT, locked_by INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE xhngw_virtuemart_categories_en_gb (
+  id INTEGER PRIMARY KEY,
+  virtuemart_category_id INTEGER NOT NULL DEFAULT 0,
+  category_name TEXT NOT NULL DEFAULT '',
+  slug TEXT NOT NULL DEFAULT ''
+);
+CREATE TABLE xhngw_virtuemart_product_manufacturers (
+  id INTEGER PRIMARY KEY,
+  virtuemart_product_id INTEGER NOT NULL DEFAULT 0,
+  virtuemart_manufacturer_id INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE xhngw_virtuemart_manufacturers (
+  virtuemart_manufacturer_id INTEGER PRIMARY KEY,
+  virtuemart_manufacturercategories_id INTEGER,
+  metarobot TEXT, metaauthor TEXT,
+  hits INTEGER NOT NULL DEFAULT 0,
+  published INTEGER NOT NULL DEFAULT 1,
+  created_on TEXT, created_by INTEGER NOT NULL DEFAULT 0,
+  modified_on TEXT, modified_by INTEGER NOT NULL DEFAULT 0,
+  locked_on TEXT, locked_by INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE xhngw_virtuemart_manufacturers_en_gb (
+  id INTEGER PRIMARY KEY,
+  virtuemart_manufacturer_id INTEGER NOT NULL DEFAULT 0,
+  mf_name TEXT NOT NULL DEFAULT '',
+  slug TEXT NOT NULL DEFAULT ''
+);
 """
+
+# Real category rows from the production dump (analysis section 5).
+CATEGORIES = [
+    (1, 0, "Women"),
+    (23, 0, "Kids"),
+    (24, 0, "Shoes"),
+    (25, 0, "Accessories"),
+    (60, 1, "Character"),
+    (61, 24, "Ballet"),
+    (62, 24, "Latin"),
+    (63, 24, "Liberti Shoes Collection"),
+    (64, 24, "Jazz Shoes"),
+    (65, 24, "Ballroom Various"),
+    (29, 1, "Leotards"),
+    (34, 1, "Tights|Gaiters"),
+    (35, 1, "Tutus"),
+    (31, 1, "Skirts"),
+]
 
 CD004_EN_NAME = "Go Dance Latin Shoes CD004 Tight Crosscut & Plated Heel"
 CD004_EN_DESC = (
@@ -138,6 +192,34 @@ def make_db(path: str | None = None) -> Database:
 
 def seed_cd004(db: Database) -> None:
     """Insert CD004 exactly as found in the production dump."""
+    # manufacturers as in the dump (ids 10..16, all published; CD004 -> 15)
+    for mid, name in ((10, "Sheddo®"), (11, "Merlet"), (12, "Katz Dancewear"),
+                      (13, "G&G Dance Shoes"), (14, "Sansha®"), (15, "Go Dance"),
+                      (16, "SoDanca")):
+        db.execute(
+            "INSERT INTO xhngw_virtuemart_manufacturers (virtuemart_manufacturer_id, "
+            "published) VALUES (?, 1)",
+            (mid,),
+        )
+        db.execute(
+            "INSERT INTO xhngw_virtuemart_manufacturers_en_gb (virtuemart_manufacturer_id, "
+            "mf_name, slug) VALUES (?, ?, ?)",
+            (mid, name, name.lower().replace("®", "").replace("&", "-")
+                .replace(" ", "-")),
+        )
+    db.execute(
+        "INSERT INTO xhngw_virtuemart_product_manufacturers VALUES (452, 494, 15)")
+    for cid, parent, name in CATEGORIES:
+        db.execute(
+            "INSERT INTO xhngw_virtuemart_categories (virtuemart_category_id, "
+            "virtuemart_vendor_id, category_parent_id, published) VALUES (?, 1, ?, 1)",
+            (cid, parent),
+        )
+        db.execute(
+            "INSERT INTO xhngw_virtuemart_categories_en_gb (virtuemart_category_id, "
+            "category_name, slug) VALUES (?, ?, ?)",
+            (cid, name, name.lower().replace("|", "-").replace(" ", "-")),
+        )
     db.execute(
         "INSERT INTO xhngw_virtuemart_products VALUES ("
         "494, 1, 0, 'CD004', 'CD004', NULL, 0.45, 'KG', NULL, NULL, NULL, 'M', '', 30, 0,"

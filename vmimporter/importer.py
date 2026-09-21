@@ -24,7 +24,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from .config import CUSTOM_COLOUR, CUSTOM_FABRIC, CUSTOM_SIZE, Config
+from .config import CUSTOM_COLOUR, CUSTOM_FABRIC, CUSTOM_SIZE, TABLE_PREFIX, Config
 from .db import Database
 from .images import MIME_TYPES, copy_image, natural_key
 from .products_csv import ProductRow, parse_price
@@ -32,6 +32,7 @@ from .repos import (
     CategoryRepository,
     CustomFieldRepository,
     LanguageRepository,
+    ManufacturerRepository,
     MediaRepository,
     PriceRepository,
     ProductRepository,
@@ -50,6 +51,7 @@ A_INSERT_MEDIA = "insert_media"
 A_INSERT_LINK = "insert_link"
 A_UPDATE_LINK = "update_link"
 A_INSERT_CAT_LINK = "insert_cat_link"
+A_INSERT_MF_LINK = "insert_mf_link"
 A_UPDATE_CORE = "update_core"
 
 TABLE_OF = {
@@ -64,6 +66,7 @@ TABLE_OF = {
     A_INSERT_LINK: "virtuemart_product_medias",
     A_UPDATE_LINK: "virtuemart_product_medias",
     A_INSERT_CAT_LINK: "virtuemart_product_categories",
+    A_INSERT_MF_LINK: "virtuemart_product_manufacturers",
     A_UPDATE_CORE: "virtuemart_products",
 }
 
@@ -127,10 +130,81 @@ class ProductImporter:
         self.customfields = CustomFieldRepository(db)
         self.media = MediaRepository(db)
         self.categories = CategoryRepository(db)
+        self.manufacturers = ManufacturerRepository(db)
 
     # ------------------------------------------------------------------ helpers
 
+    def _resolve_categories(self, plan: ProductPlan, row: ProductRow) -> list[int]:
+        """Categories for this row, validated against the DB.
+
+        Precedence: the CSV `category_id` column wins over the CLI
+        --category-id flag. An EMPTY CSV cell means "no category for this row"
+        (explicitly overriding the flag); a MISSING column means the flag
+        applies. Unknown ids are a hard error for the row (never silently
+        linked), and the plan lists each id with its shop name so the operator
+        can eyeball the mapping in the dry-run output.
+        """
+        if row.category_ids is None:
+            ids = [self.cfg.category_id] if self.cfg.category_id else []
+        else:
+            ids = list(row.category_ids)
+        if not ids:
+            return []
+        found = self.categories.get_by_ids(ids)
+        missing = [str(i) for i in ids if i not in found]
+        if missing:
+            plan.errors.append(
+                f"unknown category id(s): {', '.join(missing)} — not in "
+                f"{TABLE_PREFIX}virtuemart_categories; check the id in the shop admin"
+            )
+            return []
+        names = self.categories.names_for(ids)
+        for i in ids:
+            label = names.get(i, "")
+            plan.actions.append(Action(
+                A_INSERT_CAT_LINK,
+                f"link to category {i}" + (f" ({label})" if label else ""),
+                {"category_id": i},
+            ))
+        return ids
+
+    def _plan_manufacturer(
+        self, plan: ProductPlan, row: ProductRow,
+        product_id: int | None, core_action: Action | None = None,
+    ) -> None:
+        """Validate + plan the manufacturer link (single id, shop convention).
+
+        Unknown id = hard error for the row. On UPDATE an existing link is
+        never removed; a link to a DIFFERENT manufacturer is added alongside
+        (flag flip handles has_manufacturers).
+        """
+        if row.manufacturer_id is None:
+            return
+        mf = self.manufacturers.get(row.manufacturer_id)
+        if mf is None:
+            plan.errors.append(
+                f"unknown manufacturer id {row.manufacturer_id} — not in "
+                f"{TABLE_PREFIX}virtuemart_manufacturers; create it in the shop "
+                f"admin first, then check its id (e.g. via phpMyAdmin)"
+            )
+            return
+        if product_id is not None and self.manufacturers.link_exists(product_id, row.manufacturer_id):
+            return
+        name = self.manufacturers.name_for(row.manufacturer_id)
+        plan.actions.append(Action(
+            A_INSERT_MF_LINK,
+            f"link to manufacturer {row.manufacturer_id}" + (f" ({name})" if name else ""),
+            {"manufacturer_id": row.manufacturer_id},
+        ))
+
     def net_price(self, row: ProductRow) -> float:
+        """Stored (net) price from the CSV price.
+
+        net   : CSV price stored verbatim (DB convention).
+        gross : CSV price is the FINAL VAT-inclusive shop price; the DB stores
+                net = price / (1 + VAT/100), rounded to 6 decimals
+                (decimal(15,6)), so tax rule 1 redisplays the CSV price.
+        """
         value = row.price_net
         if value is None:
             value, err = parse_price(row.price_raw)
@@ -139,6 +213,14 @@ class ProductImporter:
         if self.cfg.price_mode == "gross":
             return round(value / (1.0 + self.cfg.vat_rate / 100.0), 6)
         return value
+
+    def price_desc(self, net: float) -> str:
+        """Human-readable price line for plan output."""
+        if self.cfg.price_mode == "gross":
+            gross = net * (1.0 + self.cfg.vat_rate / 100.0)
+            return (f"net price {net} = display {gross:.2f} EUR incl. "
+                    f"{self.cfg.vat_rate:g}% VAT (tax rule 1, EUR, shoppergroup 0)")
+        return f"net price {net} (tax rule 1, EUR, shoppergroup 0)"
 
     # ------------------------------------------------------------------ planning
 
@@ -179,7 +261,8 @@ class ProductImporter:
 
         plan.actions.append(Action(A_INSERT_CORE, f"core row (published={published}, gtin=sku)", {
             "sku": row.sku, "published": published,
-            "has_categories": 1 if self.cfg.category_id else 0,
+            "has_categories": 0,     # set below once categories are resolved
+            "has_manufacturers": 0,  # set below once manufacturer is resolved
             "has_medias": 1 if row.images else 0,
         }))
         for lang, title, desc, s_desc in (
@@ -193,16 +276,16 @@ class ProductImporter:
                  "slug": plan.slug},
             ))
         plan.actions.append(Action(
-            A_INSERT_PRICE, f"net price {net} (tax rule 1, EUR, shoppergroup 0)",
+            A_INSERT_PRICE, self.price_desc(net),
             {"net": net},
         ))
         self._plan_customfields(plan, row, None)
         self._plan_media(plan, row, None)
-        if self.cfg.category_id:
-            plan.actions.append(Action(
-                A_INSERT_CAT_LINK, f"link to category {self.cfg.category_id}",
-                {"category_id": self.cfg.category_id},
-            ))
+        cat_ids = self._resolve_categories(plan, row)
+        core_action = plan.actions[0]
+        core_action.payload["has_categories"] = 1 if cat_ids else 0
+        self._plan_manufacturer(plan, row, product_id=None, core_action=core_action)
+        core_action.payload["has_manufacturers"] = 1 if row.manufacturer_id else 0
 
     def _plan_slug(self, plan: ProductPlan, title_en: str) -> str:
         base = slugify(title_en)
@@ -223,7 +306,8 @@ class ProductImporter:
         self._plan_price_diff(plan, row, product_id, net)
         self._plan_customfields(plan, row, product_id)
         self._plan_media(plan, row, product_id)
-        self._plan_category_link(plan, product_id)
+        self._plan_category_link(plan, row, product_id)
+        self._plan_manufacturer(plan, row, product_id)
 
         core = self.products.get_core(product_id)
         extra_sets: list[str] = []
@@ -240,6 +324,9 @@ class ProductImporter:
             if (any(a.kind == A_INSERT_CAT_LINK for a in plan.actions)
                     and not core["has_categories"]):
                 extra_sets.append("has_categories")
+            if (any(a.kind == A_INSERT_MF_LINK for a in plan.actions)
+                    and not core["has_manufacturers"]):
+                extra_sets.append("has_manufacturers")
         if plan.actions or extra_sets:
             plan.actions.append(Action(
                 A_UPDATE_CORE,
@@ -300,7 +387,7 @@ class ProductImporter:
         current = self.prices.get_default_price_row(product_id)
         if current is None:
             plan.actions.append(Action(
-                A_INSERT_PRICE, f"net price {net} (tax rule 1, EUR, shoppergroup 0)",
+                A_INSERT_PRICE, self.price_desc(net),
                 {"net": net},
             ))
         elif abs(float(current["product_price"] or 0) - net) > 1e-9:
@@ -383,8 +470,18 @@ class ProductImporter:
         existing = self.media.list_product_images(product_id) if product_id else []
         existing_by_url = {r["file_url"]: r for r in existing}
 
+        # Media rows may already exist for these files without being linked to
+        # this product — e.g. re-importing after the product was deleted in the
+        # admin (deleting a product keeps its medias rows and files). Reuse the
+        # existing row instead of inserting a duplicate.
+        reused_media: dict[str, int] = {
+            url: mid for url in desired_urls
+            if url not in existing_by_url
+            and (mid := self.media.find_id_by_url(url)) is not None
+        }
+
         for pos, url in enumerate(desired_urls, start=1):
-            if url in existing_by_url:
+            if url in existing_by_url or url in reused_media:
                 continue
             mimetype = MIME_TYPES.get(Path(url).suffix.lower(), "application/octet-stream")
             meta = row.title_en if pos == 1 else ""
@@ -405,8 +502,11 @@ class ProductImporter:
         for pos, url in enumerate(ordered_urls, start=1):
             link = existing_by_url.get(url)
             if link is None:
+                desc = f"link ordering {pos}: {Path(url).name}"
+                if url in reused_media:
+                    desc += f" (reuses existing media row {reused_media[url]})"
                 plan.actions.append(Action(
-                    A_INSERT_LINK, f"link ordering {pos}: {Path(url).name}",
+                    A_INSERT_LINK, desc,
                     {"url": url, "ordering": pos},
                 ))
             elif int(link["ordering"]) != pos:
@@ -416,14 +516,36 @@ class ProductImporter:
                     {"join_id": int(link["join_id"]), "ordering": pos},
                 ))
 
-    def _plan_category_link(self, plan: ProductPlan, product_id: int) -> None:
-        if not self.cfg.category_id:
+    def _plan_category_link(self, plan: ProductPlan, row: ProductRow, product_id: int) -> None:
+        """UPDATE path: add missing category links only, never remove any.
+
+        Same CSV-column-wins precedence as CREATE. Existing links that the CSV
+        does not mention are left alone (an update widens, never narrows).
+        """
+        if row.category_ids == []:
             return
-        if not self.categories.link_exists(product_id, self.cfg.category_id):
+        ids = (row.category_ids if row.category_ids is not None
+               else ([self.cfg.category_id] if self.cfg.category_id else []))
+        if not ids:
+            return
+        found = self.categories.get_by_ids(ids)
+        missing = [str(i) for i in ids if i not in found]
+        if missing:
+            plan.errors.append(
+                f"unknown category id(s): {', '.join(missing)} — not in "
+                f"{TABLE_PREFIX}virtuemart_categories; check the id in the shop admin"
+            )
+            return
+        names = self.categories.names_for(
+            [i for i in ids if not self.categories.link_exists(product_id, i)])
+        for i in ids:
+            if self.categories.link_exists(product_id, i):
+                continue
+            label = names.get(i, "")
             plan.actions.append(Action(
                 A_INSERT_CAT_LINK,
-                f"link to category {self.cfg.category_id}",
-                {"category_id": self.cfg.category_id},
+                f"link to category {i}" + (f" ({label})" if label else ""),
+                {"category_id": i},
             ))
 
     # ------------------------------------------------------------------ execution
@@ -465,7 +587,9 @@ class ProductImporter:
             if k == A_INSERT_CORE:
                 pid = self.products.insert_core(
                     sku=p["sku"], published=p["published"],
-                    has_categories=p["has_categories"], has_medias=p["has_medias"],
+                    has_categories=p["has_categories"],
+                    has_manufacturers=p["has_manufacturers"],
+                    has_medias=p["has_medias"],
                     now=now, user_id=user_id,
                 )
                 plan.product_id = pid
@@ -524,6 +648,9 @@ class ProductImporter:
             elif k == A_INSERT_CAT_LINK:
                 self.categories.insert_link(pid, p["category_id"])
 
+            elif k == A_INSERT_MF_LINK:
+                self.manufacturers.insert_link(pid, p["manufacturer_id"])
+
             elif k == A_UPDATE_CORE:
                 extra_sets: list[str] = []
                 extra_params: list = []
@@ -536,6 +663,8 @@ class ProductImporter:
                         extra_sets.append("has_medias = 1")
                     elif flag == "has_categories" and core and not core["has_categories"]:
                         extra_sets.append("has_categories = 1")
+                    elif flag == "has_manufacturers" and core and not core["has_manufacturers"]:
+                        extra_sets.append("has_manufacturers = 1")
                 self.products.touch(pid, now, user_id, extra_sets, extra_params)
 
             else:  # pragma: no cover

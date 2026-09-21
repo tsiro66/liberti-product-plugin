@@ -26,11 +26,12 @@ from .config import (
     CURRENCY_ID,
     CUSTOMFIELD_PARAMS,
     PRODUCT_PARAMS_DEFAULT,
+    TABLE_PREFIX,
     TAX_CALC_ID,
     VENDOR_ID,
 )
 
-P = "xhngw_"  # table prefix from the analysis; single installation
+P = TABLE_PREFIX  # table prefix from the analysis; single installation
 
 
 class ProductRepository:
@@ -88,6 +89,7 @@ class ProductRepository:
         sku: str,
         published: int,
         has_categories: int,
+        has_manufacturers: int,
         has_medias: int,
         now: str,
         user_id: int,
@@ -111,7 +113,7 @@ class ProductRepository:
             "0, %s, '', "                               # low_stock, available_date, availability
             "0, 0, 0, NULL, NULL, "                     # special, discontinued, sales, unit, packaging
             f"%s, NULL, NULL, '', '', '', '', "         # params, canon, hits, intnotes, metarobot, metaauthor, layout
-            "%s, 0, %s, 0, %s, "                        # published, pordering, has_categories, has_manuf, has_medias
+            "%s, 0, %s, %s, %s, "                      # published, pordering, has_categories, has_manuf, has_medias
             "1, 0, %s, %s, %s, %s, "                    # has_prices, has_shoppergroups, created_on/by
             "NULL, 0)"                                  # locked_on, locked_by
         )
@@ -122,7 +124,7 @@ class ProductRepository:
                 "",                             # product_url
                 now,                            # available_date
                 PRODUCT_PARAMS_DEFAULT,         # product_params
-                published, has_categories, has_medias,
+                published, has_categories, has_manufacturers, has_medias,
                 now, user_id, now, user_id,     # created_on/by, modified_on/by
             ),
         )
@@ -281,13 +283,52 @@ class CustomFieldRepository:
         )
 
 
+class ManufacturerRepository:
+    def __init__(self, db) -> None:
+        self.db = db
+
+    def get(self, manufacturer_id: int) -> dict | None:
+        """The manufacturer core row (published flag included), or None."""
+        return self.db.query_one(
+            f"SELECT virtuemart_manufacturer_id, published FROM {P}virtuemart_manufacturers "
+            f"WHERE virtuemart_manufacturer_id = %s",
+            (manufacturer_id,),
+        )
+
+    def name_for(self, manufacturer_id: int) -> str:
+        row = self.db.query_one(
+            f"SELECT mf_name FROM {P}virtuemart_manufacturers_en_gb "
+            f"WHERE virtuemart_manufacturer_id = %s",
+            (manufacturer_id,),
+        )
+        return (row["mf_name"] if row else "") or ""
+
+    def link_exists(self, product_id: int, manufacturer_id: int) -> bool:
+        return self.db.query_one(
+            f"SELECT id FROM {P}virtuemart_product_manufacturers "
+            f"WHERE virtuemart_product_id = %s AND virtuemart_manufacturer_id = %s",
+            (product_id, manufacturer_id),
+        ) is not None
+
+    def insert_link(self, product_id: int, manufacturer_id: int) -> int:
+        cur = self.db.execute(
+            f"INSERT INTO {P}virtuemart_product_manufacturers "
+            "(virtuemart_product_id, virtuemart_manufacturer_id) VALUES (%s, %s)",
+            (product_id, manufacturer_id),
+        )
+        return int(cur.lastrowid)
+
+
 class MediaRepository:
     def __init__(self, db) -> None:
         self.db = db
 
     def find_id_by_url(self, file_url: str) -> int | None:
+        """Lowest-id media row for this file_url (deterministic even when the
+        table already contains duplicate rows for the same file)."""
         row = self.db.query_one(
-            f"SELECT virtuemart_media_id FROM {P}virtuemart_medias WHERE file_url = %s",
+            f"SELECT virtuemart_media_id FROM {P}virtuemart_medias WHERE file_url = %s "
+            "ORDER BY virtuemart_media_id LIMIT 1",
             (file_url,),
         )
         return int(row["virtuemart_media_id"]) if row else None
@@ -337,6 +378,33 @@ class MediaRepository:
 class CategoryRepository:
     def __init__(self, db) -> None:
         self.db = db
+
+    def get_by_ids(self, ids: list[int]) -> dict[int, dict]:
+        """Category rows by id (any order). Missing ids are simply absent."""
+        if not ids:
+            return {}
+        marks = ", ".join(["%s"] * len(ids))
+        rows = self.db.query_all(
+            f"SELECT virtuemart_category_id, published FROM {P}virtuemart_categories "
+            f"WHERE virtuemart_category_id IN ({marks})",
+            tuple(ids),
+        )
+        return {int(r["virtuemart_category_id"]): dict(r) for r in rows}
+
+    def names_for(self, ids: list[int]) -> dict[int, str]:
+        """EN names for a list of category ids (missing ids are absent)."""
+        if not ids:
+            return {}
+        marks = ", ".join(["%s"] * len(ids))
+        rows = self.db.query_all(
+            f"SELECT c.virtuemart_category_id, l.category_name "
+            f"FROM {P}virtuemart_categories c "
+            f"LEFT JOIN {P}virtuemart_categories_en_gb l "
+            f"ON l.virtuemart_category_id = c.virtuemart_category_id "
+            f"WHERE c.virtuemart_category_id IN ({marks})",
+            tuple(ids),
+        )
+        return {int(r["virtuemart_category_id"]): (r["category_name"] or "") for r in rows}
 
     def link_exists(self, product_id: int, category_id: int) -> bool:
         return self.db.query_one(

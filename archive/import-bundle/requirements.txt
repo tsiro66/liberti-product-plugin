@@ -1,0 +1,5 @@
+pymysql>=1.1.0
+python-dotenv>=1.0.0
+
+# development / testing
+pytest>=8.0

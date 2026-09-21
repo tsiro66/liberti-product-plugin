@@ -97,12 +97,17 @@ def match_images(files: list[Path], skus: list[str]) -> tuple[dict[str, list[Pat
     for path in files:
         stem = path.stem
         candidates: list[tuple] = []
+        stem_tight = _tight(stem)
         for sku in skus:
             if stem.casefold() == sku.casefold():
                 rank = 1
             elif _norm(stem).startswith(_norm(sku) + " ") or _norm(stem) == _norm(sku):
                 rank = 2
-            elif _tight(stem).startswith(_tight(sku)) and _tight(sku):
+            elif (_tight(sku) and stem_tight.startswith(_tight(sku))
+                  # tight-prefix guard: "1022W Ava" must NOT match SKU "102"
+                  # — a digit directly after the SKU means a DIFFERENT number,
+                  # not descriptive text (e.g. "0510-1" is fine, "05101" is not)
+                  and not stem_tight[len(_tight(sku)):][:1].isdigit()):
                 rank = 3
             else:
                 continue

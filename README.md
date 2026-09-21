@@ -41,8 +41,8 @@ Credentials come **only** from environment variables or a `.env` file (never har
 | `IMAGES_PATH` | local images directory (default `images`) |
 | `VM_MEDIA_DIR` | **absolute** path of the VirtueMart product media directory on the server (default from the analysis: `/home/support/web/libertidance.com/public_html/images/stories/virtuemart/product`) |
 | `VM_ADMIN_USER_ID` | Joomla user id written to `created_by`/`modified_by` (shop uses `119` = *Liberti Dancewear*) |
-| `VM_VAT_RATE` | VAT percent of calc rule 1 (24) — only for `--price-mode gross` |
-| `PRICE_MODE` | `net` (default) or `gross` |
+| `VM_VAT_RATE` | VAT percent of calc rule 1 (24) — used for `--price-mode gross` |
+| `PRICE_MODE` | `net` (default) or `gross` (server bundle default: `gross`) |
 | `LOG_DIR` | log directory (default `logs`) |
 
 CLI flags override the environment (`--db-host`, `--images`, `--category-id`, …).
@@ -66,11 +66,13 @@ CD004,Go Dance Latin Shoes CD004,...,<p>...</p>,<p>...</p>,77.82258,35|36|37|38,
 | `sku` | ✔ | identity of the product; matched against `product_sku` case-insensitively |
 | `title_en`, `description_en` | ✔ | `products_en_gb.product_name` / `product_desc` (HTML allowed) |
 | `title_el`, `description_el` | ✔ | `products_el_gr` equivalents — both language rows are always written |
-| `price` | ✔ | **NET price by default** (stored verbatim into `product_prices.product_price`, decimal(15,6)). With `--price-mode gross` the value is divided by (1 + VAT/100) and rounded to 6 decimals. A single decimal comma is tolerated (`96,50`) |
+| `price` | ✔ | the **FINAL VAT-inclusive shop price** (server default `PRICE_MODE=gross`): stored net = price / (1 + VAT/100), rounded to 6 decimals into `product_prices.product_price` (decimal(15,6)); tax rule 1 redisplays the CSV price on the frontend. With `PRICE_MODE=net` the value is stored verbatim as the net price. A single decimal comma is tolerated (`96,50`) |
 | `sizes` | – | multi-value, `|` separated → one `product_customfields` row per value (custom 6). Empty cell = **not provided** → existing values untouched |
 | `colours` | – | same pattern, custom 7. Empty cell = untouched |
 | `fabric` | – | same pattern, custom 10 (1..N values supported; the DB contains multi-fabric products) |
 | `short_desc_en`, `short_desc_el` | – | optional → `product_s_desc` |
+| `category_id` | – | optional, per-product category: one virtuemart_category_id, or several pipe-separated (`62|65`). Validated against `xhngw_virtuemart_categories` (unknown id = error, nothing imported). **Empty cell = no category for this row** (overrides `--category-id`). Column absent entirely = `--category-id` CLI flag applies to every new product. Existing products: links are only ever ADDED, never removed. UPDATE rows also validate ids |
+| `manufacturer_id` | – | optional, single virtuemart_manufacturer_id (shop convention: one manufacturer per product; pipe-separated values are rejected). Validated against `xhngw_virtuemart_manufacturers` (unknown id = error — create the manufacturer in the shop admin first). Empty/absent = no manufacturer. Writes `virtuemart_product_manufacturers` + `has_manufacturers=1`; existing links are never removed |
 
 `description_en`/`description_el` may be quoted multi-line HTML. Duplicate values inside one
 cell collapse (with a warning). Empty optional cell = leave what the DB has.
@@ -130,7 +132,8 @@ python importer.py products.csv --import --limit 10
 python importer.py products.csv --import --sku CD004,0405PT
 python importer.py products.csv --import --category-id 62        # category for NEW products
 python importer.py products.csv --import --set-published 0       # force published on all
-python importer.py products.csv --import --price-mode gross      # CSV holds VAT-inclusive prices
+python importer.py products.csv --import --price-mode gross      # CSV holds final VAT-inclusive prices
+python importer.py products.csv --import --create-only           # never touch existing products
 ```
 
 Useful flags: `--limit N`, `--sku LIST`, `--images DIR`, `--category-id ID`,
@@ -222,8 +225,11 @@ credentials and confirm the prompt.
 
 ## 12. VirtueMart-specific assumptions (from the reverse-engineering phase)
 
-1. **Prices are NET.** VAT comes from the single global calc rule (id 1, `VatTax +24%`,
+1. **Prices are NET in the DB.** VAT comes from the single global calc rule (id 1, `VatTax +24%`,
    unrestricted). The importer never stores gross prices and never creates calc rules.
+   Server default `PRICE_MODE=gross`: the CSV `price` column holds the FINAL VAT-inclusive
+   shop price; the stored net is price / 1.24 (6 dp) so the frontend redispers it exactly.
+   Set `PRICE_MODE=net` to store CSV prices verbatim as net instead.
 2. **`customfield_price` is a net surcharge** — every distinct existing value ×1.24 is a clean
    €0.50-step gross amount, and no row ever equals its product's net price. Because all
    existing Colour rows are 0 and the CSV carries no surcharges, the importer always writes 0.
