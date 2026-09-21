@@ -13,3 +13,7 @@ tools/__pycache__/
 support_antima_.sql
 server-bundle/logs/
 data/
+server-bundle/vmimporter/
+server-bundle/dryrun-out.txt
+server-bundle/import-out.txt
+.~lock.*#
