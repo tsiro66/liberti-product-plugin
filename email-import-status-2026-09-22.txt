@@ -1,0 +1,34 @@
+PRODUCTS UPLOADED: 75 (all unpublished, for review)
+
+- 51 shoes, leotards, skirts, tutus, dresses, bags, accessories (batch 1):
+  171403, L002, K001, LM501, 250502b, 230401, 250502, 9965
+  9803, 9802, 9801, 9800, 9920, 9921, Brush Wooden, Brush Plastic
+  Heel Caps, 8A, 8B, 8C, 26, 29, DZ002, DZ004
+  DZ007, DZ008, LTC1227C, LTC1764, LTC24001, LTCH25088N, LTEY26039, 4AXH
+  4BXH, 4DXH, Tutu001, Tutu002, Tutu003, 62, 921W3, 922W3
+  912W2, 952WE, 962WF, 94MWD, PS90W, PS90W2, P6, P3
+  P1, TTC, PS987
+- 24 leotards, skirts, sneakers, accessories (batch 2):
+  DY3418, DY3216, DY3623, DY3118, DY3119, DY3120, DY3626, DY5116
+  DY7704, DY1468, DY1474, DY8017, DY8011, DY8308, DY82027, DY8203
+  DY8712, DY8010, DY8027, DY8003, DY8139, DY8026, DY8131, DY8103
+- all with categories, prices (VAT handled) and photos where available
+
+PRODUCTS NOT UPLOADED: none - everything supplied is in the shop
+(39 models already existed from an earlier import and were left untouched)
+
+PRODUCTS UPLOADED BUT WITH NO PHOTO (16):
+
+NO PHOTO - only boys' photo exists:      230401, 250502
+NO PHOTO - no photo supplied:            Tutu001, Tutu002, Tutu003, P1
+NO PHOTO - no photo supplied:            DY3418, DY3623, DY8017, DY8011
+NO PHOTO - no photo supplied:            DY8308, DY82027, DY8712, DY8026
+NO PHOTO - no photo supplied:            DY8131, DY8103
+
+WHAT NEEDS MANUAL WORK:
+
+1. Publish the 75 products in the admin panel.
+2. DY8027 "Elastic stretch band": imported as one product, 3 colours
+   (Pink 97cm, Sky Blue 109cm, Lavender 131cm) at base price 8.00 EUR.
+   Shop cannot store per-colour prices yet - set Sky Blue and Lavender
+   prices manually in the product's custom fields.

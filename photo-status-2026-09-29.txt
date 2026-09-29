@@ -1,0 +1,54 @@
+PRODUCT IMAGE STATUS - all products imported (batch 1-3)
+
+===============================================================
+PRODUCTS CREATED WITH A PHOTO: 144
+===============================================================
+All other imported products have their photos attached and
+displaying. Note 4 of them reuse photos that were already in the
+shop system (171403, 160703, 161901, 250502b) - they DO have photos.
+
+===============================================================
+PRODUCTS CREATED WITHOUT A PHOTO: 18
+===============================================================
+
+Reason A - only a boys'/different-model version photo exists,
+so we did not attach the wrong photo (2 products):
+
+  230401   Men's black leather Latin shoe
+           - photo received is for SKU 230401b (boys' version),
+             which is a separate product and has its own photo
+  250502   Men's black leather ballroom shoe
+           - same: photo received is for 250502B (boys' version)
+
+Reason B - no photo was received in the material at all
+(16 products):
+
+  Tutu001, Tutu002, Tutu003     Organza tutus
+  P1                            Silicone toe pad
+  DY3418                        Girls' camisole leotard
+  DY3623                        Girls' empire dance dress
+  DY8017                        Ballet-shoe hair clip
+  DY8011                        Hairpin kit
+  DY8308                        Ribbon with sewn elastic
+  DY82027                       Ouch pouch
+  DY8712                        Flesh-tone knee pads
+  DY8026                        Ballerina umbrella
+  DY8131                        Little girls' dance bag
+  DY8103                        Metallic duffle dance bag
+  TT004G                        Muscle Roller Stick
+  TT006VG                       Vibrating Peanut Foam Roller
+
+===============================================================
+PHOTOS WE HAVE BUT COULD NOT USE: ~445 files
+===============================================================
+These are product photos received from the supplier for products
+that were never listed in the import spreadsheets (Bella, Cobra,
+Fouette, Elite, Dream Pointe and ~440 more Dance You / Capezio /
+Grishko models). They are ready for future product batches - just
+add those products to a CSV and the photos will be attached.
+
+HOW TO FIX THE 18: send photos named exactly <SKU>.jpg
+(e.g. Tutu001.jpg, DY3418.jpg) and they will be attached in a
+follow-up batch. Products work fine meanwhile - they can be
+published without photos and a photo can also be added manually
+in the shop admin at any time.

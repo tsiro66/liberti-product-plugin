@@ -6,7 +6,7 @@
 set -u
 cd "$(dirname "$0")"
 
-APPROVED=YES          # <— EDIT THIS LINE to YES only after the dry-run is reviewed
+APPROVED=NO           # <- EDIT to YES only after dry-run reviewed + backup exists
 
 if [ "$APPROVED" != "YES" ]; then
     echo "REFUSING: edit run-import.sh and set APPROVED=YES after reviewing dryrun-out.txt."
@@ -16,8 +16,8 @@ fi
 
 LOG=import-out.txt
 # batch selection: edit these two lines per batch
-CSV_FILE=products.test2.csv
-IMAGES_DIR=images/test2
+CSV_FILE=products.capezio-grishko.csv
+IMAGES_DIR=images/capezio-grishko
 exec > >(tee -a "$LOG") 2>&1
 echo "=== IMPORT start: $(date -u '+%Y-%m-%d %H:%M:%S UTC') ==="
 

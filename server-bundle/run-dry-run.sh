@@ -6,8 +6,8 @@ cd "$(dirname "$0")"          # bundle dir = /home/manouka/web/libertidance.com/
 
 LOG=dryrun-out.txt
 # batch selection: edit these two lines per batch
-CSV_FILE=products.test2.csv
-IMAGES_DIR=images/test2
+CSV_FILE=products.capezio-grishko.csv
+IMAGES_DIR=images/capezio-grishko
 exec > >(tee -a "$LOG") 2>&1
 echo "=== DRY RUN start: $(date -u '+%Y-%m-%d %H:%M:%S UTC') ==="
 echo "server python: $(python3 --version 2>&1)"

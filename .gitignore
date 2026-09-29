@@ -8,10 +8,13 @@ venv/
 .ruff_cache/
 output*.md
 local/
-real-images/
+
 tools/__pycache__/
 support_antima_.sql
 server-bundle/logs/
+server-bundle/images/
+staging/images/
+real-images/
 data/
 server-bundle/vmimporter/
 server-bundle/dryrun-out.txt
