@@ -1,0 +1,102 @@
+PRODUCTS NOT UPLOADED TO THE SHOP - full list and reasons
+=========================================================
+(as of 2026-10-01)
+
+Two different situations are covered below:
+  S1 = products IMPORTED but WITHOUT a photo (18)
+  S2 = products NOT imported at all (231 product groups, 443 photos ready)
+
+================================================================
+S1 - IMPORTED, NO PHOTO: 18 products
+================================================================
+
+Reason A - only a boys'-version photo was supplied (2 products).
+Attaching it would show the wrong shoe on the men's product:
+
+  230401    Men's black leather Latin shoe
+            (photo received belongs to 230401b, the boys' model)
+  250502    Men's black leather ballroom shoe
+            (photo received belongs to 250502B, the boys' model)
+
+Reason B - no photo received in the material at all (16 products):
+
+  Tutu001, Tutu002, Tutu003    Organza tutus
+  P1                           Silicone toe pad
+  DY3418                       Girls' camisole leotard
+  DY3623                       Girls' empire dance dress
+  DY8017                       Ballet-shoe hair clip
+  DY8011                       Hairpin kit
+  DY8308                       Ribbon with sewn elastic
+  DY82027                      Ouch pouch
+  DY8712                       Flesh-tone knee pads
+  DY8026                       Ballerina umbrella
+  DY8131                       Little girls' dance bag
+  DY8103                       Metallic duffle dance bag
+  TT004G                       Muscle Roller Stick
+  TT006VG                      Vibrating Peanut Foam Roller
+
+Fix: send photos named exactly <SKU>.jpg (e.g. Tutu001.jpg).
+They attach in a follow-up batch, or can be added manually in the
+shop admin at any time.
+
+================================================================
+S2 - NOT IMPORTED AT ALL: 231 product groups (443 photos ready)
+================================================================
+
+All of these HAVE photos but lack supplier (wholesale) prices.
+The Go Dance full catalogue we received contains no price list,
+and the remaining items are not in any catalogue at all.
+Without a price we cannot compute the retail price, so nothing
+was imported.
+
+Group S2a - Go Dance catalogue products: name, colours, sizes
+known from the catalogue (126 groups). ONLY the wholesale price
+is needed. Full line-by-line list: batch4-prices-needed-2026-10-01.txt
+
+  Highlights: Girls'/Women's leotards (999x), tutus (998x, 997x,
+  996x), skirts (9804, 1100-1106), tights (80xx, 85xx), warmers
+  (8004, 8599, 8601, 8603), ballet/gym footwear (70xx), character
+  shoes (7004, 7005, 7011, 7012, 7018), sneakers (7200), footcare
+  (TPM, TPS1, TC1, TC2, TS1, TS2, GP), hair accessories (8002,
+  8007, 8008, 8018), dance equipment (8005, 8009, 8012-8016),
+  gifts (NK9, NK10, NK13), GRAD ballet line (1100-1202, 1668-1698).
+
+Group S2b - no catalogue info at all: name AND price needed
+(~105 groups). Mostly:
+
+  Capezio B-models:      B80, B81, B46C, B122C, B172, B1900U,
+                         B201W, B205, B207, B208, B215, B216,
+                         B227, B229, B230, B243, B246, B248
+  Capezio named models:  Bella, Cobra, Daisy, CG05, DS01, DS34,
+                         D006183, H066, H07
+  Grishko pointe models: Fouette, Elite, Miracle, Dream, Maya,
+                         Nova, Tamara, Restore, V100C Luna,
+                         V200W Stella, M68, 0928402, 2007, 3055, 458
+  Dance You extras:      DY1302 jazz shoes, DY3506, DY5401 hot
+                         shorts, DY7703 character skirt, 4B, 4CXH
+  Go Dance variants:     160107-168401 (16xxx girls' shoes),
+                         3118-3626 (3xxx pro shoes), 7008, 7023,
+                         7024, 7040, 7054BS, 7075CS, 7704 colours,
+                         8501, 8510, 8511, 8604, 8606, 9502, 9506,
+                         9509, 9510, NK1-NK12, TPS, TP
+
+Fix: send the wholesale price list (and product names for group
+S2b). Import then takes about an hour end-to-end.
+
+================================================================
+NOT COUNTED AS PRODUCTS (photos will never be used)
+================================================================
+  Instagram Logo.jpg, IMG_20131219_063105.jpg (phone photo),
+  Pen.jpg, Keyrings.jpg, and similar non-product shots (~10 files).
+
+================================================================
+SUMMARY TABLE
+================================================================
+  Imported products in shop          162  (all unpublished)
+    with photo                       144
+    without photo                     18  (see S1)
+  Not imported, price blocked        231  (see S2)
+    only price missing               126  (S2a)
+    name + price missing            ~105  (S2b)
+  Photos copied into the shop        235  (live, attached to
+                                           products)

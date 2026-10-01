@@ -1,0 +1,237 @@
+WHOLESALE PRICES NEEDED - remaining products (batch 4 draft)
+============================================================
+Each line: product (SKU in brackets) + number of photos ready.
+The client must supply the supplier (wholesale) price for each.
+Retail price is then computed as wholesale x 2.24, rounded up.
+
+[0928402] (name not in catalogue)                              photos: 2
+Girls’ Wrap Around Chiffon Skirt [1100]                        photos: 1
+Girls’ Pull On Crossover Skirt [1101]                          photos: 1
+Girls’ Pinch Front Tank Leotard [1102]                         photos: 1
+Girls’ Camisole Tutu Dress [1103]                              photos: 3
+Girls’ Pinch Front Short Sleeve Leotard w/skirt [1104]         photos: 1
+Girls’ Flutter Sleeve Leotard [1105]                           photos: 3
+Girls’ Tank Leotard [1106]                                     photos: 8
+Girls’ Pinch Front Short Sleeve Leotard [1108]                 photos: 2
+Women’s Wrap Around Chiffon Skirt [1200]                       photos: 1
+Women’s Pinch Front Camisole Leotard [1201]                    photos: 1
+Women’s Double Cross Back Leotard [1202]                       photos: 2
+[160107] (name not in catalogue)                               photos: 1
+[160111] (name not in catalogue)                               photos: 1
+[160304] (name not in catalogue)                               photos: 1
+[160702] (name not in catalogue)                               photos: 1
+[161204] (name not in catalogue)                               photos: 1
+[161506] (name not in catalogue)                               photos: 1
+[161520] (name not in catalogue)                               photos: 1
+[166401] (name not in catalogue)                               photos: 1
+[166402] (name not in catalogue)                               photos: 1
+Leather Ballet Full Sole (Cowhide) [1668]                      photos: 3
+[167102] (name not in catalogue)                               photos: 1
+[168401] (name not in catalogue)                               photos: 1
+[168436] (name not in catalogue)                               photos: 2
+Velvet Microfibre Rhythmic Half Shoe [1687]                    photos: 5
+Leather Ballet Full Sole (Cowhide) [1688]                      photos: 2
+Leather Jazz Shoes w/laces [1689]                              photos: 1
+[1690] (name not in catalogue)                                 photos: 1
+Leather Ballet Full Sole (Goathide) [1691]                     photos: 1
+[1692] (name not in catalogue)                                 photos: 1
+[1693] (name not in catalogue)                                 photos: 1
+Leather Ballet Full Sole (Cowhide) [1695]                      photos: 2
+Microfibre Rhythmic Half Shoe [1698]                           photos: 2
+[174036] (name not in catalogue)                               photos: 1
+[174201] (name not in catalogue)                               photos: 1
+[177301] (name not in catalogue)                               photos: 1
+[2007] (name not in catalogue)                                 photos: 2
+[20241004] (name not in catalogue)                             photos: 1
+[3055] (name not in catalogue)                                 photos: 1
+[3118] (name not in catalogue)                                 photos: 2
+[3119] (name not in catalogue)                                 photos: 2
+[3120] (name not in catalogue)                                 photos: 1
+[3216] (name not in catalogue)                                 photos: 2
+[3506] (name not in catalogue)                                 photos: 2
+[3626] (name not in catalogue)                                 photos: 1
+SKIRTS/TUTUS [4]                                               photos: 2
+[458] (name not in catalogue)                                  photos: 1
+[680206] (name not in catalogue)                               photos: 1
+Canvas Character Shoe Low Heel [7004]                          photos: 3
+Canvas Character Shoe High Heel [7005]                         photos: 3
+[7008] (name not in catalogue)                                 photos: 2
+Leather Character Shoe Low Heel [7011]                         photos: 1
+Leather Character Shoe High Heel [7012]                        photos: 1
+Leather Character Shoe [7018]                                  photos: 3
+Microfibre Rhythmic Half Shoe [7021]                           photos: 1
+[7023] (name not in catalogue)                                 photos: 1
+[7024] (name not in catalogue)                                 photos: 1
+Leather Gymnastic Shoe [7025]                                  photos: 1
+Leather Ballet Full Sole (Cowhide) [7026]                      photos: 2
+Leather Ballet Split Sole Sole (Cowhide) [7027]                photos: 1
+Footundez (Superior) [7028]                                    photos: 1
+Leather Rhythmic Half Shoe [7031]                              photos: 1
+Leather Ballet Full Sole (Cowhide) [7032]                      photos: 2
+T-Strap Leather Character Shoe High Heel [7036]                photos: 2
+Leather Ballet Full Sole w/o drawstring [7038]                 photos: 2
+[7040] (name not in catalogue)                                 photos: 1
+Microfibre Rhythmic Half Shoe (Superior) [7042]                photos: 1
+Booties [7045]                                                 photos: 2
+Knitted Rhythmic Half Socks [7046]                             photos: 3
+[7048] (name not in catalogue)                                 photos: 2
+[7054] (name not in catalogue)                                 photos: 2
+[7075] (name not in catalogue)                                 photos: 1
+Split Sole Sneakers w/aerosole [7200]                          photos: 1
+[7704] (name not in catalogue)                                 photos: 3
+Ballet Socks [8000]                                            photos: 1
+Hairband w/glitter [8002]                                      photos: 1
+[8004] (name not in catalogue)                                 photos: 2
+Dance Belts [8005]                                             photos: 1
+Girls’ Microfibre Footed Tight [8006]                          photos: 1
+Hairband [8007]                                                photos: 1
+Hairnet [8008]                                                 photos: 4
+Knee Pads [8009]                                               photos: 1
+Girls’ Microfibre Footless Tight [8010]                        photos: 3
+Thick Stretching Loop [8012]                                   photos: 3
+Turning Disk [8013]                                            photos: 2
+Foot Stretcher [8014]                                          photos: 3
+Microfibre Ballet Socks [8015]                                 photos: 3
+Superior Latex Resistant Loop [8016]                           photos: 2
+Foot Roller [8017]                                             photos: 1
+Hairnet w/Sparkling Stones [8018]                              photos: 13
+[8027] (name not in catalogue)                                 photos: 2
+[8501] (name not in catalogue)                                 photos: 1
+Women’s Professional Netted Skin Tight [8503]                  photos: 1
+Women’s Microfibre Convertible Tight [8505]                    photos: 1
+Women’s Microfibre Stirrup Tight [8507]                        photos: 1
+Women’s Convertible Body Tight [8509]                          photos: 1
+[8510] (name not in catalogue)                                 photos: 2
+[8511] (name not in catalogue)                                 photos: 2
+Women’s Professional Netted Skin Tight w/Stones [8518]         photos: 2
+Women’s Wrap Sweater [8603]                                    photos: 1
+[8604] (name not in catalogue)                                 photos: 1
+[8606] (name not in catalogue)                                 photos: 2
+Women’s Short Sleeve Leotard w/shelf bra [9501]                photos: 1
+[9502] (name not in catalogue)                                 photos: 1
+Women’s [9503]                                                 photos: 1
+Women’s Hot Shorts [9504]                                      photos: 1
+Women’s Yoga Pant w/waistband [9505]                           photos: 1
+[9506] (name not in catalogue)                                 photos: 1
+Women’s Tank Leotard w/shelf bra [9507]                        photos: 2
+Women’s Jazz Pant [9508]                                       photos: 1
+[9509] (name not in catalogue)                                 photos: 1
+[9510] (name not in catalogue)                                 photos: 1
+Jagged Dance Skirt [9804]                                      photos: 7
+Wrap Around Sweater [9805]                                     photos: 1
+Girls’ Long Sleeve Unitard [9918]                              photos: 1
+Girls’ Halter Neck Leotard [9919]                              photos: 3
+Girls’ Long Sleeve Leotard [9922]                              photos: 12
+Girls’ Bicycle Short [9925]                                    photos: 2
+Girls’ Racer Back Top [9926]                                   photos: 8
+Girls’ Hot Short [9927]                                        photos: 2
+Girls’ Unitard [9928]                                          photos: 4
+Women’s Sleeveless Leotard [9930]                              photos: 3
+Women’s Camisole Leotard w/ [9931]                             photos: 5
+Women’s Camisole Leotard w/lining [9932]                       photos: 3
+Women’s Short Sleeve Leotard [9933]                            photos: 4
+Women’s Sleeveless Leotard w/mesh [9934]                       photos: 5
+Women’s Tank Leotard w/mesh [9935]                             photos: 4
+Women’s Camisole Leotard w/low [9936]                          photos: 3
+Women’s Boatneck Leotard w/key- [9937]                         photos: 4
+Women’s Camisole Leotard w/twist back [9938]                   photos: 4
+Women’s [9939]                                                 photos: 4
+Women’s [9940]                                                 photos: 2
+Camisole Leotard [9941]                                        photos: 8
+Girls’ Short Sleeve Leotard w/skirt [9942]                     photos: 1
+Girls’ Camisole Leotard w/ [9943]                              photos: 1
+Girls’ Long Sleeve Catsuit [9944]                              photos: 1
+Girls’ Camisole Leotard w/ [9948]                              photos: 1
+Girls’ Tank Leotard w/skirt [9949]                             photos: 1
+Girls’ Stirrup Ankle Pant [9950]                               photos: 1
+Girls’ Tank Leotard [9951]                                     photos: 1
+Girls’ [9952]                                                  photos: 1
+Women’s Dance Dress [9953]                                     photos: 2
+Girls’ Empire Dress [9954]                                     photos: 2
+Girls’ Character Skirt [9968]                                  photos: 1
+Girls’ Latin Skirt [9969]                                      photos: 2
+Girls’ Ankle Pant [9970]                                       photos: 2
+[9979] (name not in catalogue)                                 photos: 4
+Lyrical Dress [9980]                                           photos: 3
+[9981] (name not in catalogue)                                 photos: 1
+Girls’ [9982]                                                  photos: 7
+Girls’ [9983]                                                  photos: 1
+Girls’ Short Sleeve Leotard w/skirt [9984]                     photos: 1
+Girls’ Cotton Wrap Around [9985]                               photos: 1
+Girls’ Tank Leotard w/lining [9988]                            photos: 1
+Girls’ Camisole Leotard w/lining [9989]                        photos: 1
+Girls’ Short Sleeve Leotard [9990]                             photos: 1
+Girls’ [9991]                                                  photos: 1
+Girls’ Long Sleeve Leotard [9992]                              photos: 1
+Girls’ [9993]                                                  photos: 1
+Girls’ Pull On Georgette Skirt [9994]                          photos: 1
+Girls’ Wrap Around Chiffon Skirt [9995]                        photos: 1
+Girls’ Pull On Crossover Skirt [9996]                          photos: 1
+Below Knee Length Chiffon Skirt [9997]                         photos: 1
+Women’s Wrap Around Chiffon Skirt [9998]                       photos: 1
+[B122] (name not in catalogue)                                 photos: 2
+[B172] (name not in catalogue)                                 photos: 1
+[B1900] (name not in catalogue)                                photos: 1
+[B201] (name not in catalogue)                                 photos: 1
+[B205] (name not in catalogue)                                 photos: 1
+[B207] (name not in catalogue)                                 photos: 1
+[B208] (name not in catalogue)                                 photos: 1
+[B215] (name not in catalogue)                                 photos: 1
+[B216] (name not in catalogue)                                 photos: 1
+[B227] (name not in catalogue)                                 photos: 1
+[B229] (name not in catalogue)                                 photos: 1
+[B230] (name not in catalogue)                                 photos: 2
+[B243] (name not in catalogue)                                 photos: 1
+[B246] (name not in catalogue)                                 photos: 2
+[B248] (name not in catalogue)                                 photos: 1
+[B46] (name not in catalogue)                                  photos: 2
+[B80] (name not in catalogue)                                  photos: 1
+[B81] (name not in catalogue)                                  photos: 2
+[Bella] (name not in catalogue)                                photos: 1
+[CG05] (name not in catalogue)                                 photos: 1
+[Cobra] (name not in catalogue)                                photos: 2
+[D006183] (name not in catalogue)                              photos: 3
+[DS01] (name not in catalogue)                                 photos: 1
+[DS34] (name not in catalogue)                                 photos: 1
+[DY1302] (name not in catalogue)                               photos: 1
+[DY3506] (name not in catalogue)                               photos: 2
+[DY5401] (name not in catalogue)                               photos: 1
+[DY7703] (name not in catalogue)                               photos: 1
+[Daisy] (name not in catalogue)                                photos: 1
+[Dream] (name not in catalogue)                                photos: 1
+[Elite] (name not in catalogue)                                photos: 2
+[Fouette] (name not in catalogue)                              photos: 3
+Gel Pad thin [GP]                                              photos: 1
+[H066] (name not in catalogue)                                 photos: 1
+[H07] (name not in catalogue)                                  photos: 3
+[M68] (name not in catalogue)                                  photos: 1
+[Maya] (name not in catalogue)                                 photos: 2
+[Miracle] (name not in catalogue)                              photos: 1
+[NK1] (name not in catalogue)                                  photos: 1
+Keychain w/ballet shoe [NK10]                                  photos: 2
+[NK11] (name not in catalogue)                                 photos: 1
+[NK12] (name not in catalogue)                                 photos: 2
+Silver Necklace w/ballerina [NK13]                             photos: 1
+[NK2] (name not in catalogue)                                  photos: 1
+[NK3] (name not in catalogue)                                  photos: 1
+[NK4] (name not in catalogue)                                  photos: 1
+[NK5] (name not in catalogue)                                  photos: 1
+[NK7] (name not in catalogue)                                  photos: 1
+[NK8] (name not in catalogue)                                  photos: 1
+Silver Earrings w/ballerina [NK9]                              photos: 1
+[Nova] (name not in catalogue)                                 photos: 5
+[P12] (name not in catalogue)                                  photos: 1
+Satin Ribbon [SMR]                                             photos: 1
+Stretching Ribbon [STRR]                                       photos: 1
+Silicon Toe Tube [TC1]                                         photos: 1
+Silicon Toe Cap [TC2]                                          photos: 1
+[TP] (name not in catalogue)                                   photos: 1
+Toe Pad Material [TPM]                                         photos: 1
+[TPS] (name not in catalogue)                                  photos: 1
+Toe Pad Silicon w/pores [TPS1]                                 photos: 1
+[TPSA] (name not in catalogue)                                 photos: 1
+Silicon Toe Separators (Pack of [TS1]                          photos: 3
+Silicon Toe Separators [TS2]                                   photos: 2
+[Tamara] (name not in catalogue)                               photos: 1
+[V100] (name not in catalogue)                                 photos: 1
+[V200] (name not in catalogue)                                 photos: 1

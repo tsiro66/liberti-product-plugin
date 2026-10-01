@@ -1,0 +1,44 @@
+CATALOGUE COVERAGE vs UNUSED PHOTOS (443 files)
+===============================================
+
+The 443 unused photos belong to ~321 SKU groups. Checked against the
+supplier catalogues in catalogues-text/ (catalogue-1 Dance You,
+catalogue-2 Dux Dancewear, catalogue-3 Go Dance full catalogue,
+catalogue-4 Go Dance Latin Collection).
+
+RESULT: catalogue info (name, colours, sizes, price) exists for
+~205 photos / ~136 SKU groups.
+
+NO catalogue info at all: ~238 photos / ~116 SKU groups.
+These are mostly:
+  - colour/size variants of listed products (photos exist, catalogue
+    lists the base SKU only - e.g. 8004A/B legwarmers for listed 8004)
+  - products NOT in any supplier catalogue we have:
+      Capezio B-models (B80, B81, B122C, B172, B201W, B205...), Bella,
+      Cobra, CG05, DS01, DS34, D006183, Tamara, V100C Luna, V200W Stella,
+      458, 0928402
+      Go Dance 16xxx-17xxx girls' shoes (160107, 161204, 167102, 168401,
+      177301...), 3xxx Pro shoes (3118, 3216, 3506, 3626...), 3055,
+      2007, 458
+      Dance You extras: DY1302 jazz shoes, DY3506, DY5401 hot shorts,
+      DY7703 character skirt
+      Grishko pointe named models: Fouette, Elite, Miracle, Dream,
+      Maya, Nova, Tamara ( catalogue lists only some)
+      Non-product photos: Instagram Logo, IMG_20131219, Keyrings,
+      shoe pencil case, Hairpin Box (some used already)
+
+FOR THE 18 IMPORTED PRODUCTS WITHOUT PHOTOS:
+catalogue info EXISTS for 16 of 18 (all except Tutu002/Tutu003, which
+are the same Organza Tutu as Tutu001, and TT004G/TT006VG massage
+rollers). So descriptions/prices/sizes are confirmed - what is missing
+is ONLY the photo files.
+
+BOTTOM LINE
+===========
+1. The catalogues give enough info to import ~205 more products WITH
+   photos (photo + name + colours + sizes + price all available).
+2. ~116 SKU groups still lack supplier info - ask the client for their
+   price lists / catalogues for those (mainly Capezio B-models, Go
+   Dance 16xxx/3xxx series, Grishko named pointe models).
+3. For the 18 no-photo imported products the info is complete; only
+   photos are needed from the client.
