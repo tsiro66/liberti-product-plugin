@@ -1,8 +1,8 @@
-PHOTOS WE COULD NOT UPLOAD - reason per file (443 total)
-=========================================================
+PHOTOS WE COULD NOT UPLOAD - reason per file
+=============================================
 
 
-### no price provided (in catalogue, but that catalogue has no prices)  (274 files)
+### no price provided (in catalogue, but that catalogue has no prices)  (269 files)
 1100.jpg
 1101.jpg
 1102.jpg
@@ -43,8 +43,6 @@ PHOTOS WE COULD NOT UPLOAD - reason per file (443 total)
 1695.png
 1698.png
 1698A.png
-4B.jpg
-4CXH.jpg
 7004.jpg
 7004.png
 7004N.png
@@ -258,16 +256,13 @@ PHOTOS WE COULD NOT UPLOAD - reason per file (443 total)
 9996.jpg
 9997 Red.jpg
 9998.jpg
-Elastic.png
 GP.jpg
-Mesh Elastic.png
 NK10.jpg
 NK10.png
 NK13.png
 NK9.jpg
 SMR.png
 STRR.jpg
-Satin Ribbon.png
 TC1.JPG
 TC2.JPG
 TPM.jpg
@@ -278,7 +273,7 @@ TS1A.jpg
 TS2.JPG
 TS2A.jpg
 
-### no product info at all (not in any catalogue)  (157 files)
+### no product info at all (not in any catalogue)  (159 files)
 0928402 Violet.jpg
 0928402.jpg
 160107.jpg
@@ -292,6 +287,8 @@ TS2A.jpg
 166402.jpg
 167102.jpg
 168401.jpg
+168436.bmp
+168436b.bmp
 1690.jpg
 1692.jpg
 1693.jpg
@@ -436,19 +433,6 @@ Vibrating Foam Roller_10.jpg
 Vibrating Foam Roller_18.jpg
 Vibrating Peanut Foam Roller_6.jpg
 shoe pencil case.png
-
-### product already in shop (photo file wrong format: .bmp)  (11 files)
-168436.bmp
-168436b.bmp
-174036.bmp
-174036b.bmp
-174201.bmp
-174201b.bmp
-174802.bmp
-680206.bmp
-680206b.bmp
-9969A.bmp
-9969B.bmp
 
 ### photo of DY8011 Hairpin kit - product is in the shop without photo, can be attached later  (1 files)
 Hairpin Box.jpg
