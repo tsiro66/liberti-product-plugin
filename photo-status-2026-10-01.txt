@@ -1,11 +1,17 @@
 PRODUCT IMAGE STATUS - all products imported (batch 1-3)
+=========================================================
+(as of 2026-10-01)
+
+Total products imported: 164 unique products (166 records - two test
+products, 102 and 1130, were imported twice by accident; those two
+duplicate records should be deleted in the shop admin).
 
 ===============================================================
-PRODUCTS CREATED WITH A PHOTO: 144
+PRODUCTS CREATED WITH A PHOTO: 146 of 164
 ===============================================================
-All other imported products have their photos attached and
-displaying. Note 4 of them reuse photos that were already in the
-shop system (171403, 160703, 161901, 250502b) - they DO have photos.
+All photos are copied into the shop and attached. Note 4 of the
+products reuse photos that were already in the shop system
+(171403, 160703, 161901, 250502b) - they DO have photos.
 
 ===============================================================
 PRODUCTS CREATED WITHOUT A PHOTO: 18
@@ -38,17 +44,22 @@ Reason B - no photo was received in the material at all
   TT004G                        Muscle Roller Stick
   TT006VG                       Vibrating Peanut Foam Roller
 
-===============================================================
-PHOTOS WE HAVE BUT COULD NOT USE: ~445 files
-===============================================================
-These are product photos received from the supplier for products
-that were never listed in the import spreadsheets (Bella, Cobra,
-Fouette, Elite, Dream Pointe and ~440 more Dance You / Capezio /
-Grishko models). They are ready for future product batches - just
-add those products to a CSV and the photos will be attached.
-
 HOW TO FIX THE 18: send photos named exactly <SKU>.jpg
 (e.g. Tutu001.jpg, DY3418.jpg) and they will be attached in a
 follow-up batch. Products work fine meanwhile - they can be
 published without photos and a photo can also be added manually
 in the shop admin at any time.
+
+===============================================================
+PHOTOS WE HAVE BUT COULD NOT USE: 443 files
+===============================================================
+These belong to ~231 products that are NOT in the shop yet -
+not because of photos, but because we have no wholesale prices
+for them: the Go Dance catalogue we received contains no price
+list, and ~105 of the products are not in any catalogue at all.
+
+Full breakdown: see file not-uploaded-2026-10-01.txt
+Price request list: batch4-prices-needed-2026-10-01.txt
+
+Once the wholesale prices arrive, these products import with
+their photos attached.
