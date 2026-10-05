@@ -15,7 +15,9 @@ server-bundle/logs/
 server-bundle/images/
 staging/images/
 real-images/
-data/
+data/*
+!data/inbound/
+!data/catalogues-text/
 server-bundle/vmimporter/
 server-bundle/dryrun-out.txt
 server-bundle/import-out.txt
